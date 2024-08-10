@@ -9,6 +9,7 @@ const SignUp = () => {
 
     const [form, setForm] = useState({
         username: '',
+        email: '',
         password: ''
     })
 
@@ -34,6 +35,13 @@ const SignUp = () => {
                         handleChangeText={handleChange('username')}
                         otherStyles="mt-7"
                         placeholder='Username'
+                    />
+                    <FormField
+                        title="Email"
+                        value={form.email}
+                        handleChangeText={handleChange('email')}
+                        otherStyles="mt-7"
+                        placeholder='Email'
                     />
                     <FormField
                         title="Password"
