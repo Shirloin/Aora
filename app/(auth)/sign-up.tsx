@@ -1,9 +1,10 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { ChangeEvent, useState } from 'react'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { createUser } from '../../lib/appwrite'
 
 const SignUp = () => {
 
@@ -20,7 +21,19 @@ const SignUp = () => {
     }
 
     const handleSubmit = () => {
+        if (!form.username || !form.email || !form.password) {
+            Alert.alert('Error', 'All fields must be filled')
+        }
+        setIsSubmitting(true)
 
+        try {
+            const result = createUser(form.username, form.email, form.password)
+            router.replace('/home')
+        } catch (error: any) {
+            Alert.alert('Error', error.message)
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
@@ -50,7 +63,7 @@ const SignUp = () => {
                         otherStyles="mt-7"
                         placeholder='Password'
                     />
-                    <CustomButton title='Sign In' handlePress={handleSubmit} containerStyles='mt-7' isLoading={isSubmitting} />
+                    <CustomButton title='Sign Up' handlePress={handleSubmit} containerStyles='mt-7' isLoading={isSubmitting} />
 
                     <View className='justify-center pt-5 flex-row gap-2'>
                         <Text className='text-lg text-gray-100 font-pregular'>

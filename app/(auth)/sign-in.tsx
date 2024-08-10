@@ -3,7 +3,9 @@ import React, { ChangeEvent, useState } from 'react'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { Alert } from 'react-native'
+import { signIn } from '../../lib/appwrite'
 
 const SignIn = () => {
 
@@ -18,8 +20,20 @@ const SignIn = () => {
         setForm({ ...form, [field]: e.nativeEvent.text })
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        if (!form.email || !form.password) {
+            Alert.alert('Error', 'All fields must be filled')
+        }
+        setIsSubmitting(true)
 
+        try {
+            await signIn(form.email, form.password)
+            router.replace('/home')
+        } catch (error: any) {
+            Alert.alert('Error', error.message)
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
