@@ -1,5 +1,6 @@
 import { Account, Avatars, Client, Databases, ID, Query } from 'react-native-appwrite';
 import { TUser } from '../types/user-type';
+import { TVideo } from '../types/video-type';
 export const config = {
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
     platform: process.env.EXPO_PUBLIC_APPWRITE_PLATFORM,
@@ -9,6 +10,17 @@ export const config = {
     videCollectionId: process.env.EXPO_PUBLIC_APPWRITE_VIDEO_COLLECTION_ID,
     storageId: process.env.EXPO_PUBLIC_APPWRITE_STORAGE_ID
 }
+
+const {
+    endpoint,
+    platform,
+    projectId,
+    databaseId,
+    userCollectionId,
+    videCollectionId,
+    storageId
+} = config
+
 const client = new Client();
 
 client
@@ -79,5 +91,17 @@ export const getCurrentUser = async (): Promise<TUser | null> => {
     } catch (error) {
         console.log(error)
         return null
+    }
+}
+
+export const getAllPosts = async () => {
+    try {
+        const posts = await db.listDocuments(
+            databaseId!,
+            videCollectionId!,
+        )
+        return posts.documents as unknown as TVideo[]
+    } catch (error: any) {
+        throw new Error(error)
     }
 }
