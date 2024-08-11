@@ -4,9 +4,8 @@ import { getAllPosts } from "./appwrite"
 import { Alert } from "react-native"
 import { TUser } from "../types/user-type";
 
-type TData = TVideo[] | TUser[];
-const useAppwrite = (fn: () => Promise<TData>) => {
-    const [data, setData] = useState<TData>([])
+const useAppwrite = <T>(fn: () => Promise<T[]>) => {
+    const [data, setData] = useState<T[]>([])
     const [isLoading, setIsLoading] = useState(true)
 
     const fetchData = async () => {
