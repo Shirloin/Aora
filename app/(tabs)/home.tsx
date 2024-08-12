@@ -1,17 +1,18 @@
-import { Alert, FlatList, Image, RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Alert, FlatList, Image, RefreshControl, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { images } from '../../constants'
 import SearchInput from '../../components/SearchInput'
 import Trending from '../../components/Trending'
 import EmptyState from '../../components/EmptyState'
-import { getAllPosts } from '../../lib/appwrite'
-import { TVideo } from '../../types/video-type'
+import { getAllPosts, getLatestPosts } from '../../lib/appwrite'
 import useAppwrite from '../../lib/useAppwrite'
 import VideoCard from '../../components/VideoCard'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Home = () => {
 
     const { data: posts, refetch } = useAppwrite(getAllPosts)
+    const { data: latestPosts } = useAppwrite(getLatestPosts)
 
     const [refreshing, setRefreshing] = useState(false)
     const onRefresh = async () => {
@@ -21,12 +22,12 @@ const Home = () => {
     }
 
     return (
-        <SafeAreaView className='bg-primary h-full'>
+        <SafeAreaView style={{ backgroundColor: "#161622", height: '100%' }} >
             <FlatList
                 data={posts}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <VideoCard video={item} />
+                    <VideoCard key={item.id} video={item} />
                 )}
                 ListHeaderComponent={() => (
                     <View className='my-6 px-4 space-y-6'>
@@ -44,7 +45,7 @@ const Home = () => {
                             <Text className='text-gray-100 text-lg font-pregular mb-3'>
                                 Latest Videos
                             </Text>
-                            <Trending posts={posts} />
+                            <Trending posts={latestPosts ?? []} />
                         </View>
                     </View>
                 )}

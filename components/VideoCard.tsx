@@ -2,6 +2,7 @@ import { Image, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'reac
 import React, { useState } from 'react'
 import { TVideo } from '../types/video-type'
 import { icons } from '../constants'
+import { ResizeMode, Video } from 'expo-av'
 
 interface VideoCardProps {
     video: TVideo
@@ -11,7 +12,6 @@ const VideoCard = ({ video }: VideoCardProps) => {
 
     const [play, setPlay] = useState(false)
 
-    console.log(video.thumbnail)
     return (
         <View className='flex-col items-center px-4 mb-14'>
             <View className='flex-row gap-3 items-start'>
@@ -35,15 +35,26 @@ const VideoCard = ({ video }: VideoCardProps) => {
             </View>
 
             {play ? (
-                <Text>Playing</Text>
+                <Video
+                    source={{ uri: video.video }}
+                    className='w-52 h-72 rounded-[35px] mt-3 bg-white/10'
+                    resizeMode={ResizeMode.CONTAIN} useNativeControls
+                    shouldPlay={true}
+                    onPlaybackStatusUpdate={(status) => {
+                        if (status.isLoaded && status.didJustFinish) {
+                            setPlay(false);
+                        }
+                    }}
+                />
             ) : (
                 <TouchableOpacity activeOpacity={0.7} onPress={() => setPlay(true)} className='w-full h-60 rounded-xl mt-3 relative justify-center items-center'>
                     <Image source={{ uri: video.thumbnail }} className='w-full h-full rounded-xl mt-3' resizeMode='cover' />
                     <Image source={icons.play} className='w-12 h-12 absolute' resizeMode='contain' />
                 </TouchableOpacity>
-            )}
+            )
+            }
 
-        </View>
+        </View >
     )
 }
 
