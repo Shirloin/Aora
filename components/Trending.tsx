@@ -41,6 +41,7 @@ const TrendingItem = ({ activeItem, item }: TrendingItem) => {
             {play ? (
                 <Video
                     source={{ uri: item.video }}
+                    style={styles.video}
                     className='w-52 h-72 rounded-[35px] mt-3 bg-white/10'
                     resizeMode={ResizeMode.CONTAIN} useNativeControls
                     shouldPlay={true}
@@ -90,4 +91,12 @@ const Trending = ({ posts }: TrendingProps) => {
 
 export default Trending
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    video: {
+        width: 208,
+        height: 288,
+        borderRadius: 35,
+        marginTop: 12,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+    }
+})

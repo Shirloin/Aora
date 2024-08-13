@@ -37,6 +37,7 @@ const VideoCard = ({ video }: VideoCardProps) => {
             {play ? (
                 <Video
                     source={{ uri: video.video }}
+                    style={styles.video}
                     className='w-52 h-72 rounded-[35px] mt-3 bg-white/10'
                     resizeMode={ResizeMode.CONTAIN} useNativeControls
                     shouldPlay={true}
@@ -60,4 +61,12 @@ const VideoCard = ({ video }: VideoCardProps) => {
 
 export default VideoCard
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    video: {
+        width: "100%",
+        height: 240,
+        borderRadius: 12,
+        marginTop: 12
+
+    }
+})
