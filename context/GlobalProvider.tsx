@@ -6,12 +6,16 @@ interface GlobalContextType {
     isLoggedIn: boolean;
     user: TUser | null;
     isLoading: boolean;
+    setIsLoggedIn: (val: boolean) => void;
+    setUser: (user: TUser | null) => void;
 }
 
 const GlobalContext = createContext<GlobalContextType>({
     isLoggedIn: false,
     isLoading: false,
-    user: null
+    user: null,
+    setIsLoggedIn: () => { },
+    setUser: () => { }
 });
 
 export const useGlobalContext = () => useContext(GlobalContext)
@@ -39,7 +43,7 @@ export default function GlobalProvider({ children }: { children: ReactNode }) {
     }, [])
 
     return (
-        <GlobalContext.Provider value={{ isLoggedIn, user, isLoading }}>
+        <GlobalContext.Provider value={{ isLoggedIn, user, isLoading, setIsLoggedIn, setUser }}>
             {children}
         </GlobalContext.Provider>
     )
