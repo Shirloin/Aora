@@ -3,11 +3,11 @@ import React, { useState } from 'react'
 import { icons, images } from '../constants'
 
 interface FormFieldProps {
-    title: string
-    value: any
-    placeholder: string
-    handleChangeText: (e: { nativeEvent: { text: string } }) => void
-    otherStyles: string
+    title?: string
+    value?: any
+    placeholder?: string
+    handleChangeText?: (e: { nativeEvent: { text: string } }) => void
+    otherStyles?: string
 }
 
 const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, ...props }: FormFieldProps) => {
