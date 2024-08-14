@@ -54,7 +54,7 @@ export const createUser = async (username: string, email: string, password: stri
             avatar: avatarUrl,
             accountId: newAccount.$id
         })
-        return newUser
+        return newUser as unknown as TUser
     } catch (error: any) {
         console.log(error)
         throw new Error(error)
