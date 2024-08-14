@@ -117,3 +117,17 @@ export const getLatestPosts = async () => {
         throw new Error(error)
     }
 }
+export const searchPosts = async (query: string) => {
+    try {
+        const posts = await db.listDocuments(
+            databaseId!,
+            videCollectionId!,
+            [Query.search('title', query)]
+        )
+        return posts.documents as unknown as TVideo[]
+    } catch (error: any) {
+        throw new Error(error)
+    }
+}
+
+

@@ -39,7 +39,8 @@ const VideoCard = ({ video }: VideoCardProps) => {
                     source={{ uri: video.video }}
                     style={styles.video}
                     className='w-52 h-72 rounded-[35px] mt-3 bg-white/10'
-                    resizeMode={ResizeMode.CONTAIN} useNativeControls
+                    resizeMode={ResizeMode.CONTAIN}
+                    useNativeControls
                     shouldPlay={true}
                     onPlaybackStatusUpdate={(status) => {
                         if (status.isLoaded && status.didJustFinish) {
