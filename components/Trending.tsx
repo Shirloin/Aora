@@ -77,7 +77,7 @@ const Trending = ({ posts }: TrendingProps) => {
             data={posts}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-                <TrendingItem key={item.id} activeItem={activeItem} item={item} />
+                <TrendingItem activeItem={activeItem} item={item} />
             )}
             onViewableItemsChanged={viewableItemsChanges}
             viewabilityConfig={{

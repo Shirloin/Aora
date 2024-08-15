@@ -1,6 +1,7 @@
-import { Account, Avatars, Client, Databases, ID, Query } from 'react-native-appwrite';
+import { Account, Avatars, Client, Databases, ID, ImageGravity, Query, Storage } from 'react-native-appwrite';
 import { TUser } from '../types/user-type';
 import { TVideo } from '../types/video-type';
+import { ImagePickerAsset } from 'expo-image-picker';
 export const config = {
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
     platform: process.env.EXPO_PUBLIC_APPWRITE_PLATFORM,
@@ -32,6 +33,7 @@ client
 const account = new Account(client)
 const avatars = new Avatars(client)
 const db = new Databases(client)
+const storage = new Storage(client)
 
 
 export const createUser = async (username: string, email: string, password: string) => {
@@ -99,6 +101,7 @@ export const getAllPosts = async () => {
         const posts = await db.listDocuments(
             databaseId!,
             videCollectionId!,
+            [Query.orderDesc('$createdAt')]
         )
         return posts.documents as unknown as TVideo[]
     } catch (error: any) {
@@ -110,7 +113,7 @@ export const getLatestPosts = async () => {
         const posts = await db.listDocuments(
             databaseId!,
             videCollectionId!,
-            [Query.orderDesc('$createdAt', Query.limit(7))]
+            [Query.orderDesc('$createdAt'), Query.limit(7)]
         )
         return posts.documents as unknown as TVideo[]
     } catch (error: any) {
@@ -134,7 +137,7 @@ export const getUserPosts = async (userId: string) => {
         const posts = await db.listDocuments(
             databaseId!,
             videCollectionId!,
-            [Query.equal('creator', userId)]
+            [Query.equal('creator', userId), Query.orderDesc('$createdAt')]
         )
         return posts.documents as unknown as TVideo[]
     } catch (error: any) {
@@ -151,3 +154,72 @@ export const signOut = async () => {
         throw new Error(error)
     }
 }
+
+export const getFilePreview = async (fileId: string, type: string) => {
+    let fileUrl;
+    try {
+        if (type === "video") {
+            fileUrl = storage.getFileView(storageId!, fileId)
+        } else if (type === "image") {
+            fileUrl = storage.getFilePreview(storageId!, fileId, 2000, 2000, ImageGravity.Top, 100)
+        } else {
+            throw new Error('Invalid file type')
+        }
+
+        if (!fileUrl) throw Error
+        return fileUrl
+    } catch (error: any) {
+        throw new Error(error)
+    }
+}
+
+export const uploadFile = async (file: ImagePickerAsset, type: string) => {
+    if (!file) return
+    const { uri, type: mimeType, fileName, fileSize } = file;
+    if (!uri || !mimeType || !fileName || fileSize === undefined) {
+        throw new Error("Missing required file properties");
+    }
+    const asset = {
+        name: fileName,
+        type: mimeType,
+        size: fileSize,
+        uri: uri,
+    };
+    try {
+        const uploadedFile = await storage.createFile(
+            storageId!,
+            ID.unique(),
+            asset
+        )
+        const fileUrl = await getFilePreview(uploadedFile.$id, type)
+        return fileUrl
+    } catch (error: any) {
+        throw new Error(error)
+    }
+}
+
+export const createVideo = async ({ form }: { form: { title: string, prompt: string, video: ImagePickerAsset, thumbnail: ImagePickerAsset, userId: string } }) => {
+    try {
+        const [thumbailUrl, videoUrl] = await Promise.all([
+            uploadFile(form.thumbnail, 'image'),
+            uploadFile(form.video, 'video')
+        ])
+
+        const newPost = await db.createDocument(
+            databaseId!,
+            videCollectionId!,
+            ID.unique(),
+            {
+                title: form.title,
+                thumbnail: thumbailUrl,
+                video: videoUrl,
+                prompt: form.prompt,
+                creator: form.userId
+            }
+        )
+        return newPost
+    } catch (error: any) {
+        throw new Error(error)
+    }
+}
+
