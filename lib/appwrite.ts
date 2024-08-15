@@ -169,21 +169,18 @@ export const getFilePreview = async (fileId: string, type: string) => {
         if (!fileUrl) throw Error
         return fileUrl
     } catch (error: any) {
+        console.log("Get File Preview: ", error)
         throw new Error(error)
     }
 }
 
 export const uploadFile = async (file: ImagePickerAsset, type: string) => {
     if (!file) return
-    const { uri, type: mimeType, fileName, fileSize } = file;
-    if (!uri || !mimeType || !fileName || fileSize === undefined) {
-        throw new Error("Missing required file properties");
-    }
     const asset = {
-        name: fileName,
-        type: mimeType,
-        size: fileSize,
-        uri: uri,
+        name: file.fileName!,
+        type: file.mimeType!,
+        size: file.fileSize!,
+        uri: file.uri!,
     };
     try {
         const uploadedFile = await storage.createFile(
@@ -194,6 +191,7 @@ export const uploadFile = async (file: ImagePickerAsset, type: string) => {
         const fileUrl = await getFilePreview(uploadedFile.$id, type)
         return fileUrl
     } catch (error: any) {
+        console.log("Upload file: ", error)
         throw new Error(error)
     }
 }
@@ -219,6 +217,7 @@ export const createVideo = async ({ form }: { form: { title: string, prompt: str
         )
         return newPost
     } catch (error: any) {
+        console.log("Create Video: ", error)
         throw new Error(error)
     }
 }

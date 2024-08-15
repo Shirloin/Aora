@@ -70,6 +70,7 @@ const Create = () => {
             Alert.alert('Success', 'Post success')
             router.push('/home')
         } catch (error: any) {
+            console.log("Submit: ", error)
             Alert.alert('Error', error.message)
         } finally {
             setForm({
